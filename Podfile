@@ -4,8 +4,7 @@
 # use_frameworks!
 
 target 'TestFlexibleCell' do
-    
-    pod 'Masonry', '~> 0.6.3'
+
 
 end
 

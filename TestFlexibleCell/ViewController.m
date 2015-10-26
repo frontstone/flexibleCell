@@ -11,6 +11,7 @@
 
 #import "OptionTableViewCell.h"
 #import "InsertCallBackCell.h"
+#import "OptionView.h"
 
 #import "BaseModel.h"
 
@@ -22,6 +23,8 @@
     NSIndexPath *startIndexPath;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+@property (nonatomic, strong) OptionView *optionView;
 @property (nonatomic, strong) NSMutableArray *dataSorces;
 
 @end
@@ -38,11 +41,8 @@
     [self.tableView registerNib:[UINib nibWithNibName:@"OptionTableViewCell" bundle:nil] forCellReuseIdentifier:@"OptionTableViewCellId"];
     [self.tableView registerNib:[UINib nibWithNibName:@"InsertCallBackCell" bundle:nil] forCellReuseIdentifier:@"InsertCallBackCellId"];
     
-    OptionTableViewCell *optionView = [[[NSBundle mainBundle] loadNibNamed:@"OptionTableViewCell" owner:self options:nil] lastObject];
-    optionView.SelectBlock = ^(OptionType type){
-        [self p_selectedWithOptionType:type andIndex:0];
-    };
-    self.tableView.tableFooterView = optionView;
+
+    self.tableView.tableFooterView = self.optionView;
     
     [self.tableView addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)]];
 
@@ -68,12 +68,22 @@
         }
         UITableViewCell *moveCell = [self.tableView cellForRowAtIndexPath:startIndexPath];
         snapShotView = [UIView customSnapshoFromView:moveCell];
-        snapShotView.layer.borderWidth = 0.3;
-        snapShotView.layer.masksToBounds = YES;
-        snapShotView.center = moveCell.center;
+        __block CGPoint center = moveCell.center;
+        snapShotView.center = center;
+        snapShotView.alpha = 0.0;
         [self.tableView addSubview:snapShotView];
-        moveCell.hidden = YES;
-        
+        [UIView animateWithDuration:0.25 animations:^{
+            center.y = point.y;
+            snapShotView.center = center;
+            snapShotView.transform = CGAffineTransformMakeScale(1.05, 1.05);
+            snapShotView.alpha = 0.98;
+            moveCell.alpha = 0.0;
+            
+        } completion:^(BOOL finished) {
+            
+            moveCell.hidden = YES;
+            
+        }];
     }else if (longGes.state == UIGestureRecognizerStateChanged){
         if (![snapShotView isKindOfClass:[UIView class]]) {
             return;
@@ -101,9 +111,9 @@
         } completion:^(BOOL finished) {
             
             startIndexPath = nil;
-            [snapShotView removeFromSuperview];
             snapShotView = nil;
-            
+            [snapShotView removeFromSuperview];
+    
         }];
 
         
@@ -196,6 +206,7 @@
     }
 }
 
+
 #pragma mark - getter
 
 - (NSMutableArray *)dataSorces
@@ -204,6 +215,18 @@
         _dataSorces = [NSMutableArray array];
     }
     return _dataSorces;
+}
+
+- (OptionView *)optionView
+{
+    if (!_optionView) {
+        _optionView = [[[NSBundle mainBundle] loadNibNamed:@"OptionView" owner:self options:nil] objectAtIndex:0];
+        __weak ViewController *weakSelf = self;
+        _optionView.SelectBlock = ^(OptionType type){
+            [weakSelf p_selectedWithOptionType:type andIndex:0];
+        };
+    }
+    return _optionView;
 }
 
 - (void)didReceiveMemoryWarning {

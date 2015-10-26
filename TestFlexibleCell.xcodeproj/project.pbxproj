@@ -16,6 +16,8 @@
 		750A62AF1BDDF183005ABA1C /* WordViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 750A62AD1BDDF183005ABA1C /* WordViewController.xib */; };
 		750A62B21BDDF6C3005ABA1C /* BaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 750A62B11BDDF6C3005ABA1C /* BaseModel.m */; };
 		750A62B51BDE166A005ABA1C /* UIView+SnapShot.m in Sources */ = {isa = PBXBuildFile; fileRef = 750A62B41BDE166A005ABA1C /* UIView+SnapShot.m */; };
+		750A62B81BDE289F005ABA1C /* OptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 750A62B71BDE289F005ABA1C /* OptionView.m */; };
+		750A62BA1BDE28B0005ABA1C /* OptionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 750A62B91BDE28B0005ABA1C /* OptionView.xib */; };
 		7520B48C1BDDC7B70098BBAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7520B48B1BDDC7B70098BBAE /* main.m */; };
 		7520B48F1BDDC7B70098BBAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7520B48E1BDDC7B70098BBAE /* AppDelegate.m */; };
 		7520B4921BDDC7B70098BBAE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7520B4911BDDC7B70098BBAE /* ViewController.m */; };
@@ -57,6 +59,9 @@
 		750A62B11BDDF6C3005ABA1C /* BaseModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseModel.m; sourceTree = "<group>"; };
 		750A62B31BDE166A005ABA1C /* UIView+SnapShot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SnapShot.h"; sourceTree = "<group>"; };
 		750A62B41BDE166A005ABA1C /* UIView+SnapShot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SnapShot.m"; sourceTree = "<group>"; };
+		750A62B61BDE289F005ABA1C /* OptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionView.h; sourceTree = "<group>"; };
+		750A62B71BDE289F005ABA1C /* OptionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionView.m; sourceTree = "<group>"; };
+		750A62B91BDE28B0005ABA1C /* OptionView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OptionView.xib; sourceTree = "<group>"; };
 		7520B4871BDDC7B70098BBAE /* TestFlexibleCell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestFlexibleCell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7520B48B1BDDC7B70098BBAE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7520B48D1BDDC7B70098BBAE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -148,6 +153,9 @@
 				750A62A11BDDD7E8005ABA1C /* OptionTableViewCell.h */,
 				750A62A21BDDD7E8005ABA1C /* OptionTableViewCell.m */,
 				750A62A31BDDD7E8005ABA1C /* OptionTableViewCell.xib */,
+				750A62B61BDE289F005ABA1C /* OptionView.h */,
+				750A62B71BDE289F005ABA1C /* OptionView.m */,
+				750A62B91BDE28B0005ABA1C /* OptionView.xib */,
 				750A62A61BDDDE23005ABA1C /* InsertCallBackCell.h */,
 				750A62A71BDDDE23005ABA1C /* InsertCallBackCell.m */,
 				750A62A81BDDDE23005ABA1C /* InsertCallBackCell.xib */,
@@ -307,6 +315,7 @@
 				750A62AF1BDDF183005ABA1C /* WordViewController.xib in Resources */,
 				750A62A51BDDD7E8005ABA1C /* OptionTableViewCell.xib in Resources */,
 				750A62AA1BDDDE23005ABA1C /* InsertCallBackCell.xib in Resources */,
+				750A62BA1BDE28B0005ABA1C /* OptionView.xib in Resources */,
 				7520B49A1BDDC7B70098BBAE /* LaunchScreen.storyboard in Resources */,
 				7520B4971BDDC7B70098BBAE /* Assets.xcassets in Resources */,
 				7520B4951BDDC7B70098BBAE /* Main.storyboard in Resources */,
@@ -389,6 +398,7 @@
 				750A62B21BDDF6C3005ABA1C /* BaseModel.m in Sources */,
 				7520B4921BDDC7B70098BBAE /* ViewController.m in Sources */,
 				7520B48F1BDDC7B70098BBAE /* AppDelegate.m in Sources */,
+				750A62B81BDE289F005ABA1C /* OptionView.m in Sources */,
 				7520B48C1BDDC7B70098BBAE /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
