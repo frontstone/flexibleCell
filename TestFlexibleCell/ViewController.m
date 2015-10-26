@@ -21,6 +21,7 @@
 {
     UIView *snapShotView;
     NSIndexPath *startIndexPath;
+    NSIndexPath *indexPathOfCallBackImage;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
@@ -135,7 +136,7 @@
     if (baseModel.type == ModelTypeOption) {
         OptionTableViewCell *optionCell = [tableView dequeueReusableCellWithIdentifier:@"OptionTableViewCellId"];
         optionCell.SelectBlock = ^(OptionType type){
-            [self p_selectedWithOptionType:type andIndex:indexPath.row];
+            [self p_selectedWithOptionType:type andIndexPath:indexPath];
         };
         return optionCell;
     }else{
@@ -173,21 +174,21 @@
 {
     UIImage *originalImage = [info objectForKey:UIImagePickerControllerOriginalImage];
     BaseModel *baseModel = [[BaseModel alloc] initWithModelType:(ModelTypeImage) andData:originalImage];
-    [self.dataSorces addObject:baseModel];
+    [self.dataSorces insertObject:baseModel atIndex:indexPathOfCallBackImage.row + 1];
     [self.tableView reloadData];
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - private
 
-- (void)p_selectedWithOptionType:(OptionType)type andIndex:(NSInteger)index
+- (void)p_selectedWithOptionType:(OptionType)type andIndexPath:(NSIndexPath *)indexPath
 {
     if (type == OptionTypeWord) {
         WordViewController *wordVC = [[WordViewController alloc] init];
         [wordVC configureWithWord:@"haha" andCallBack:^(NSString *text) {
             BaseModel *baseModel = [[BaseModel alloc] initWithModelType:(ModelTypeWord) andData:text];
-            if (index > 0) {
-                [self.dataSorces insertObject:baseModel atIndex:index + 1];
+            if (indexPath) {
+                [self.dataSorces insertObject:baseModel atIndex:indexPath.row + 1];
             }else{
                 [self.dataSorces addObject:baseModel];
             }
@@ -197,6 +198,8 @@
         
     }else if (type == OptionTypeImage){
         
+        
+        indexPathOfCallBackImage = indexPath;
         UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
         imagePickerController.delegate = self;
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
@@ -220,10 +223,10 @@
 - (OptionView *)optionView
 {
     if (!_optionView) {
-        _optionView = [[[NSBundle mainBundle] loadNibNamed:@"OptionView" owner:self options:nil] objectAtIndex:0];
+        _optionView = [[[NSBundle mainBundle] loadNibNamed:@"OptionView" owner:self options:nil] firstObject];
         __weak ViewController *weakSelf = self;
         _optionView.SelectBlock = ^(OptionType type){
-            [weakSelf p_selectedWithOptionType:type andIndex:0];
+            [weakSelf p_selectedWithOptionType:type andIndexPath:nil];
         };
     }
     return _optionView;
