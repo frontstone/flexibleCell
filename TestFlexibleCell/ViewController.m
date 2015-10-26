@@ -14,8 +14,13 @@
 
 #import "BaseModel.h"
 
-@interface ViewController ()<UITableViewDelegate,UITableViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+#import "UIView+SnapShot.h"
 
+@interface ViewController ()<UITableViewDelegate,UITableViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+{
+    UIView *snapShotView;
+    NSIndexPath *startIndexPath;
+}
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *dataSorces;
 
@@ -38,6 +43,8 @@
         [self p_selectedWithOptionType:type andIndex:0];
     };
     self.tableView.tableFooterView = optionView;
+    
+    [self.tableView addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)]];
 
 }
 
@@ -46,6 +53,65 @@
     [super viewWillAppear:animated];
      self.navigationController.navigationBarHidden = YES;
 }
+
+#pragma mark - actions
+- (void)longPress:(UILongPressGestureRecognizer *)longGes
+{
+    CGPoint point = [longGes locationInView:self.tableView];
+    NSIndexPath *indexPathing = [self.tableView indexPathForRowAtPoint:point];
+  
+    if (longGes.state == UIGestureRecognizerStateBegan) {
+        
+        startIndexPath = indexPathing;
+        if (![startIndexPath isKindOfClass:[NSIndexPath class]]) {
+            return;
+        }
+        UITableViewCell *moveCell = [self.tableView cellForRowAtIndexPath:startIndexPath];
+        snapShotView = [UIView customSnapshoFromView:moveCell];
+        snapShotView.layer.borderWidth = 0.3;
+        snapShotView.layer.masksToBounds = YES;
+        snapShotView.center = moveCell.center;
+        [self.tableView addSubview:snapShotView];
+        moveCell.hidden = YES;
+        
+    }else if (longGes.state == UIGestureRecognizerStateChanged){
+        if (![snapShotView isKindOfClass:[UIView class]]) {
+            return;
+        }
+        snapShotView.center = CGPointMake(self.tableView.bounds.size.width/2, point.y) ;
+        if (indexPathing && ![indexPathing isEqual:startIndexPath]) {
+            [self.dataSorces exchangeObjectAtIndex:indexPathing.row withObjectAtIndex:startIndexPath.row];
+            [self.tableView moveRowAtIndexPath:indexPathing toIndexPath:startIndexPath];
+            startIndexPath = indexPathing;
+        }
+        
+    }else{
+        
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:startIndexPath];
+        cell.hidden = NO;
+        cell.alpha = 0.0;
+        
+        [UIView animateWithDuration:0.25 animations:^{
+            
+            snapShotView.center = cell.center;
+            snapShotView.transform = CGAffineTransformIdentity;
+            snapShotView.alpha = 0.0;
+            cell.alpha = 1.0;
+            
+        } completion:^(BOOL finished) {
+            
+            startIndexPath = nil;
+            [snapShotView removeFromSuperview];
+            snapShotView = nil;
+            
+        }];
+
+        
+    }
+    
+}
+
+#pragma mark - delegate && dataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -57,13 +123,11 @@
 
     BaseModel *baseModel = self.dataSorces[indexPath.row];
     if (baseModel.type == ModelTypeOption) {
-        
         OptionTableViewCell *optionCell = [tableView dequeueReusableCellWithIdentifier:@"OptionTableViewCellId"];
         optionCell.SelectBlock = ^(OptionType type){
             [self p_selectedWithOptionType:type andIndex:indexPath.row];
         };
         return optionCell;
-        
     }else{
         InsertCallBackCell *insertCell = [tableView dequeueReusableCellWithIdentifier:@"InsertCallBackCellId"];
         [insertCell configureWithBaseModel:baseModel indexPath:indexPath andInsertOptionBlock:^(NSIndexPath *indexPathCallBack) {
@@ -91,31 +155,7 @@
     return 100.f;
 }
 
-- (void)p_selectedWithOptionType:(OptionType)type andIndex:(NSInteger)index
-{
-    if (type == OptionTypeWord) {
-        WordViewController *wordVC = [[WordViewController alloc] init];
-        [wordVC configureWithWord:@"haha" andCallBack:^(NSString *text) {
-            BaseModel *baseModel = [[BaseModel alloc] initWithModelType:(ModelTypeWord) andData:text];
-            if (index > 0) {
-                [self.dataSorces insertObject:baseModel atIndex:index + 1];
-            }else{
-               [self.dataSorces addObject:baseModel];
-            }
-            [self.tableView reloadData];
-        }];
-        [self.navigationController pushViewController:wordVC animated:YES];
-        
-    }else if (type == OptionTypeImage){
-        
-        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-            imagePickerController.delegate = self;
-       if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
-            imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-           [self presentViewController:imagePickerController animated:YES completion:nil];
-           }
-    }
-}
+
 
 #pragma mark - UIImagePickerControllerDelegate
 
@@ -127,6 +167,36 @@
     [self.tableView reloadData];
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
+
+#pragma mark - private
+
+- (void)p_selectedWithOptionType:(OptionType)type andIndex:(NSInteger)index
+{
+    if (type == OptionTypeWord) {
+        WordViewController *wordVC = [[WordViewController alloc] init];
+        [wordVC configureWithWord:@"haha" andCallBack:^(NSString *text) {
+            BaseModel *baseModel = [[BaseModel alloc] initWithModelType:(ModelTypeWord) andData:text];
+            if (index > 0) {
+                [self.dataSorces insertObject:baseModel atIndex:index + 1];
+            }else{
+                [self.dataSorces addObject:baseModel];
+            }
+            [self.tableView reloadData];
+        }];
+        [self.navigationController pushViewController:wordVC animated:YES];
+        
+    }else if (type == OptionTypeImage){
+        
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+        imagePickerController.delegate = self;
+        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
+            imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+            [self presentViewController:imagePickerController animated:YES completion:nil];
+        }
+    }
+}
+
+#pragma mark - getter
 
 - (NSMutableArray *)dataSorces
 {

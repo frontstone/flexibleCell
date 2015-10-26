@@ -13,9 +13,11 @@
 - (void)awakeFromNib {
     
     [super awakeFromNib];
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
 - (IBAction)optionAction:(UIButton *)sender {
+    
     if (self.SelectBlock) {
         self.SelectBlock(sender.tag);
     }

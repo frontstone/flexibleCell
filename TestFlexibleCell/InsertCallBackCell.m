@@ -27,6 +27,7 @@
     
     self.textView.hidden = YES;
     self.showImageView.hidden = YES;
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
 + (UINib *)Nib
